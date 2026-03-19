@@ -11,6 +11,7 @@ A minimal menu bar timer for macOS.
 - Supports presets (25m, 5m, 15m) or custom durations
 - Tap the time display to type a custom duration: `25` for 25 minutes, `5:30` for 5m30s, `:30` for 30 seconds
 - System notification + sound when the timer completes
+- Press Enter to start the timer when the popover is open
 - Dismisses the popover automatically when you start a timer
 
 ## Requirements
