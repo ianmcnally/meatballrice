@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.svg" width="128" height="128" alt="meatballrice logo">
+</p>
+
 # meatballrice
 
 A minimal menu bar timer for macOS.

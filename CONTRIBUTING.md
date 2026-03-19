@@ -65,3 +65,28 @@ open ~/Library/Developer/Xcode/DerivedData/meatballrice-*/Build/Products/Debug/m
 ```
 
 Or hit Cmd+R in Xcode.
+
+## Releasing
+
+1. Bump `CURRENT_PROJECT_VERSION` in `project.yml` and regenerate:
+   ```sh
+   xcodegen generate
+   ```
+
+2. Build a release binary:
+   ```sh
+   xcodebuild -scheme meatballrice -configuration Release clean build
+   ```
+
+3. Zip the app:
+   ```sh
+   cd ~/Library/Developer/Xcode/DerivedData/meatballrice-*/Build/Products/Release
+   zip -r meatballrice.zip meatballrice.app
+   ```
+
+4. Create a GitHub release:
+   ```sh
+   gh release create vX.Y.Z meatballrice.zip --title "vX.Y.Z" --notes "Release notes here"
+   ```
+
+> **Note:** The app is not notarized, so users will need to right-click > Open to bypass Gatekeeper.
