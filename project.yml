@@ -13,6 +13,9 @@ targets:
         INFOPLIST_FILE: meatballrice/Info.plist
         CODE_SIGN_ENTITLEMENTS: meatballrice/meatballrice.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: com.ianmcnally.meatballrice
+        DEVELOPMENT_TEAM: ZF9GPMT728
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: false

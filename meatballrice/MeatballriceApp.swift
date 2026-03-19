@@ -14,8 +14,6 @@ struct MeatballriceApp: App {
             case .running, .paused:
                 Text(timerManager.formattedTime)
                     .monospacedDigit()
-            case .completed:
-                Image(systemName: "checkmark.circle.fill")
             }
         }
         .menuBarExtraStyle(.window)

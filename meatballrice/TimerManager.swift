@@ -6,7 +6,14 @@ enum TimerState {
     case idle
     case running
     case paused
-    case completed
+}
+
+class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
+    }
 }
 
 @MainActor
@@ -17,6 +24,7 @@ class TimerManager: ObservableObject {
 
     private var timer: Timer?
     private var endDate: Date?
+    private let notificationDelegate = NotificationDelegate()
 
     var formattedTime: String {
         let total = max(0, Int(timeRemaining))
@@ -31,7 +39,8 @@ class TimerManager: ObservableObject {
     }
 
     init() {
-        requestNotificationPermission()
+        UNUserNotificationCenter.current().delegate = notificationDelegate
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 
     func start() {
@@ -71,6 +80,12 @@ class TimerManager: ObservableObject {
         timeRemaining = minutes * 60
     }
 
+    func setDurationSeconds(_ seconds: TimeInterval) {
+        guard state == .idle else { return }
+        selectedDuration = seconds
+        timeRemaining = seconds
+    }
+
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             Task { @MainActor in
@@ -91,19 +106,15 @@ class TimerManager: ObservableObject {
     }
 
     private func complete() {
-        state = .completed
         timer?.invalidate()
         timer = nil
         playSound()
         sendNotification()
+        stop()
     }
 
     private func playSound() {
         NSSound(named: "Glass")?.play()
-    }
-
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
 
     private func sendNotification() {

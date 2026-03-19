@@ -48,8 +48,6 @@ struct TimerView: View {
                     runningControls
                 case .paused:
                     pausedControls
-                case .completed:
-                    completedControls
                 }
             }
             .frame(height: 120)
@@ -66,8 +64,21 @@ struct TimerView: View {
     }
 
     private func commitEdit() {
-        if let mins = Double(editText.trimmingCharacters(in: .whitespaces)),
-           mins >= 1, mins <= 120 {
+        let text = editText.trimmingCharacters(in: .whitespaces)
+        if text.contains(":") {
+            // Parse mm:ss or :ss format
+            let parts = text.split(separator: ":", omittingEmptySubsequences: false)
+            if parts.count == 2 {
+                let mins = Double(parts[0]) ?? 0
+                let secs = Double(parts[1]) ?? 0
+                if mins >= 0, mins <= 120, secs >= 0, secs < 60 {
+                    let totalSeconds = mins * 60 + secs
+                    if totalSeconds >= 1 && totalSeconds <= 120 * 60 {
+                        timerManager.setDurationSeconds(totalSeconds)
+                    }
+                }
+            }
+        } else if let mins = Double(text), mins >= 1, mins <= 120 {
             sliderMinutes = round(mins)
             timerManager.setDuration(sliderMinutes)
         }
@@ -76,6 +87,10 @@ struct TimerView: View {
 
     private func cancelEdit() {
         isEditing = false
+    }
+
+    private func dismissPopover() {
+        NSApp.keyWindow?.close()
     }
 
     // MARK: - Idle
@@ -113,6 +128,7 @@ struct TimerView: View {
             // Start — subtle, not a big blue pill
             StartButton {
                 timerManager.start()
+                dismissPopover()
             }
         }
     }
@@ -156,25 +172,6 @@ struct TimerView: View {
         }
     }
 
-    // MARK: - Completed
-
-    private var completedControls: some View {
-        VStack(spacing: 16) {
-            ProgressBar(progress: 1.0, color: .green)
-                .padding(.horizontal, 24)
-
-            HStack(spacing: 24) {
-                IconButton(systemName: "arrow.counterclockwise", size: 13, tinted: true) {
-                    timerManager.stop()
-                    timerManager.start()
-                }
-                IconButton(systemName: "xmark", size: 12) {
-                    timerManager.stop()
-                    sliderMinutes = timerManager.selectedDuration / 60
-                }
-            }
-        }
-    }
 }
 
 // MARK: - Custom Slider
