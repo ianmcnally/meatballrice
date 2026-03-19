@@ -1,0 +1,22 @@
+name: meatballrice
+options:
+  bundleIdPrefix: com.ianmcnally
+  deploymentTarget:
+    macOS: "14.0"
+targets:
+  meatballrice:
+    type: application
+    platform: macOS
+    sources: [meatballrice]
+    settings:
+      base:
+        INFOPLIST_FILE: meatballrice/Info.plist
+        CODE_SIGN_ENTITLEMENTS: meatballrice/meatballrice.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.ianmcnally.meatballrice
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        GENERATE_INFOPLIST_FILE: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_PREVIEWS: true
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+        SWIFT_VERSION: "5.9"
