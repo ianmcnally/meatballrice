@@ -7,6 +7,7 @@ struct TimerView: View {
     @State private var isEditing = false
     @State private var editText: String = ""
     @FocusState private var isTextFieldFocused: Bool
+    @State private var keyMonitor: Any?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,6 +62,23 @@ struct TimerView: View {
                 .padding(.bottom, 14)
         }
         .frame(width: 220)
+        .onAppear {
+            if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
+            keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if event.keyCode == 36 && timerManager.state == .idle && !isEditing {
+                    timerManager.start()
+                    dismissPopover()
+                    return nil
+                }
+                return event
+            }
+        }
+        .onDisappear {
+            if let keyMonitor {
+                NSEvent.removeMonitor(keyMonitor)
+            }
+            keyMonitor = nil
+        }
     }
 
     private func commitEdit() {
