@@ -8,6 +8,7 @@ struct TimerView: View {
     @State private var editText: String = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var keyMonitor: Any?
+    @AppStorage("nudgeEnabled") private var nudgeEnabled: Bool = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,13 +54,21 @@ struct TimerView: View {
             }
             .frame(height: 120)
 
-            // Quit
-            Text("Quit")
-                .font(.system(size: 11))
-                .foregroundStyle(.primary.opacity(isHoveringQuit ? 0.4 : 0.2))
-                .onHover { isHoveringQuit = $0 }
-                .onTapGesture { NSApplication.shared.terminate(nil) }
-                .padding(.bottom, 14)
+            // Footer
+            HStack(spacing: 12) {
+                NudgeToggle(nudgeEnabled: $nudgeEnabled)
+
+                Text("·")
+                    .foregroundStyle(.primary.opacity(0.2))
+                    .font(.system(size: 10))
+
+                Text("Quit")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.primary.opacity(isHoveringQuit ? 0.4 : 0.2))
+                    .onHover { isHoveringQuit = $0 }
+                    .onTapGesture { NSApplication.shared.terminate(nil) }
+            }
+            .padding(.bottom, 14)
         }
         .frame(width: 220)
         .onAppear {
@@ -306,6 +315,21 @@ private struct StartButton: View {
             .contentShape(Capsule())
             .onTapGesture(perform: action)
             .onHover { isHovering = $0 }
+    }
+}
+
+// MARK: - Nudge Toggle
+
+private struct NudgeToggle: View {
+    @Binding var nudgeEnabled: Bool
+    @State private var isHovering = false
+
+    var body: some View {
+        Text(nudgeEnabled ? "Nudge on" : "Nudge off")
+            .font(.system(size: 11))
+            .foregroundStyle(.primary.opacity(isHovering ? 0.4 : 0.2))
+            .onHover { isHovering = $0 }
+            .onTapGesture { nudgeEnabled.toggle() }
     }
 }
 
